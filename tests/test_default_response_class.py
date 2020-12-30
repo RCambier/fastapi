@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import orjson
 from fastapi import APIRouter, FastAPI
@@ -9,16 +9,13 @@ from fastapi.testclient import TestClient
 class ORJSONResponse(JSONResponse):
     media_type = "application/x-orjson"
 
-    def __init__(self, *args, option: Optional[int] = None, **kwargs) -> None:  # type: ignore
+    def __init__(self, *args, option: int = 0, **kwargs) -> None:  # type: ignore
         self.option = option
         super().__init__(*args, **kwargs)
 
     def render(self, content: Any) -> bytes:
         assert orjson is not None, "orjson must be installed to use ORJSONResponse"
-        if self.option is not None:
-            return orjson.dumps(content, option=self.option)
-        else:
-            return orjson.dumps(content)
+        return orjson.dumps(content, option=self.option)
 
 
 class OverrideResponse(JSONResponse):
